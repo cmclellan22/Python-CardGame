@@ -1,0 +1,202 @@
+import random
+from graphics import *
+
+def main():
+        width,height  =  400,400
+        win = GraphWin("High or Low", width,height)
+        win.setBackground('skyblue')
+        printme(win,width,height)
+
+        while True:
+                card,v1 = randCard(width,height)
+                card.draw(win)
+                print(v1)
+
+                hx1, hy1 = 25,200
+                hx2,hy2 = 125,300
+                lx1,ly1 = 150,200
+                lx2,ly2 = 250,300
+                ex1,ey1 = 275,200
+                ex2,ey2 = 375,300
+                
+                high = Rectangle(Point(hx1,hy1),Point(hx2,hy2))
+                low = Rectangle(Point(lx1,ly1),Point(lx2,ly2))
+                equal = Rectangle(Point(ex1,ey1),Point(ex2,ey2))
+                high.setFill('pink')
+                low.setFill('aqua')
+                equal.setFill('violet')
+                high.setWidth(5)
+                low.setWidth(5)
+                equal.setWidth(5)
+                high.draw(win)
+                low.draw(win)
+                equal.draw(win)
+
+                msg1 = Text(Point(75,250),'Higher').draw(win)
+                msg2 = Text(Point(200,250),'Lower').draw(win)
+                msg3 = Text(Point(325,250),'Equal').draw(win)
+                msg4 = Text(Point(200,340),'What do you think the next card will be?').draw(win)
+                point = win.getMouse()
+        
+                if (clickButton(win,point,hx1,hy1,hx2,hy2) == True):
+                        msg4.undraw()
+                        high.undraw()
+                        msg1.undraw()
+                        x = -100
+                        moveCard(card,x)
+                        card2,v2 = randCard(width,height)
+                        card2.draw(win)
+                        x = 100
+                        moveCard(card2,x)
+                        new1,new2 = convertInt(v1,v2)
+                        if (new1 < new2):
+                                w = Text(Point(200,340),'You won!')
+                                w.setFill('green')
+                                w.setStyle('bold')
+                                w.setSize(20)
+                                w.draw(win)
+                        else:
+                                w = Text(Point(200,340),'You lost!')
+                                w.setFill('red')
+                                w.setStyle('bold')
+                                w.setSize(20)
+                                w.draw(win)
+                elif (clickButton(win,point,lx1,ly1,lx2,ly2) == True):
+                        msg4.undraw()
+                        low.undraw()
+                        msg2.undraw()
+                        x = -100
+                        moveCard(card,x)
+                        card2,v2 = randCard(width,height)
+                        card2.draw(win)
+                        x = 100
+                        moveCard(card2,x)
+                        print(v2)
+                        new1,new2 = convertInt(v1,v2)
+                        if (new1 > new2):
+                                w = Text(Point(200,340),'You won!')
+                                w.setFill('green')
+                                w.setStyle('bold')
+                                w.setSize(20)
+                                w.draw(win)
+                        else:
+                                w = Text(Point(200,340),'You lost!')
+                                w.setFill('red')
+                                w.setStyle('bold')
+                                w.setSize(20)
+                                w.draw(win)
+                elif (clickButton(win,point,ex1,ey1,ex2,ey2) == True):
+                        msg4.undraw()
+                        equal.undraw()
+                        msg3.undraw()
+                        x = -100
+                        moveCard(card,x)
+                        card2,v2 = randCard(width,height)
+                        card2.draw(win)
+                        x = 100
+                        moveCard(card2,x)
+                        print(v2)
+                        new1,new2 = convertInt(v1,v2)
+                        if (new1 == new2):
+                                w = Text(Point(200,340),'You won!')
+                                w.setFill('green')
+                                w.setStyle('bold')
+                                w.setSize(20)
+                                w.draw(win)
+                        else:
+                                w = Text(Point(200,340),'You lost!')
+                                w.setFill('red')
+                                w.setStyle('bold')
+                                w.setSize(20)
+                                w.draw(win)
+
+                reset = Rectangle(Point(150,365),Point(250,395)).draw(win)
+                reset.setFill('white')
+                r = Text(Point(200,380),'Reset').draw(win)
+                click = win.getMouse()
+                TF = clickButton(win,click,150,365,250,395)
+                if (TF == True):
+                        card.undraw()
+                        card2.undraw()
+                        w.undraw()
+                        reset.undraw()
+                        r.undraw()
+                elif (TF == False):
+                        break
+        win.close()
+
+def randCard(width,height):
+        fout = open('mycards.txt','w')
+        suits = ['clubs', 'diamonds', 'hearts', 'spades']
+        values = ['ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king']
+        L = []
+        for s in suits:
+                for v in values:
+                        card =  v + "_of_" + s + ".png"
+                        L.append(card)
+
+        index = random.randint(0,len(L)-1)
+        print(L[index])
+        string = L[index].split('_')
+        first = string[0]
+        
+        card = Image(Point(width/2,height/4),"cardImages/" + L[index])
+        return card,first
+
+def clickButton(win,point,x1,y1,x2,y2):
+    xClick = point.getX()
+    yClick = point.getY()
+    if ( x1 < xClick < x2 and y1 < yClick < y2):
+        return True
+    else:
+        return False
+
+def moveCard(card,x):
+    card.move(x,0)
+    time.sleep(0.1)
+
+def convertInt(v1,v2):
+    if (v1 == 'jack'):
+        v1 = '11'
+    if (v1 == 'queen'):
+        v1 = '12'
+    if (v1 == 'king'):
+        v1 = '13'
+    if (v1 == 'ace'):
+        v1 = '14'
+    if (v2 == 'jack'):
+        v2 = '11'
+    if (v2 == 'queen'):
+        v2 = '12'
+    if (v2 == 'king'):
+        v2 = '13'
+    if (v2 == 'ace'):
+        v2 = '14'
+    new1 = int(v1)
+    new2 = int(v2)
+    return new1,new2
+
+def printme(win,w,h):
+    msg = Text(Point(w/2,h/2),'Higher, Lower, or Equal Game').draw(win)
+    time.sleep(2)
+    msg.undraw()
+    msg1 = Text(Point(w/2,h/4),'CS111 B, FA 2018').draw(win)
+    msg2 = Text(Point(w/2,h/2),"Christina McLellan, Class of '20, CS and BU major").draw(win)
+    time.sleep(3.5)
+    msg1.undraw()
+    msg2.undraw()
+    msg4 = Text(Point(w/2,h/2),'For this game, we will show you one card.').draw(win)
+    time.sleep(2)
+    msg4.undraw()
+    msg5 = Text(Point(w/2,h/4),'It is up to you to decide if the next card').draw(win)
+    msg6 = Text(Point(w/2,h/2),'will be higher, lower, or equal to it.').draw(win)
+    msg7 = Text(Point(w/2,h*3/4),'Aces are high.').draw(win)
+    time.sleep(2.5)
+    msg5.undraw()
+    msg6.undraw()
+    msg7.undraw()
+    msg8 = Text(Point(w/2,h/2),'Use the buttons provided to play!').draw(win)
+    time.sleep(2)
+    msg8.undraw()
+        
+main()
